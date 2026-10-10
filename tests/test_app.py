@@ -83,10 +83,13 @@ def test_read_users_with_users(client, user):
 
 
 def test_get_user_by_id(client, user):
-    user_schema = UserPublic.model_validate(user).model_dump()
-    response = client.get(f"/users/{user_schema['id']}")
+    response = client.get(f"/users/{user.id}")
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == user_schema
+    assert response.json() == {
+        "id": 1,
+        "username": user.username,
+        "email": user.email,
+    }
 
 
 def test_get_an_inexistent_user(client):
@@ -151,8 +154,7 @@ def test_update_integrity_error(client, user):
 
 
 def test_delete_user(client, user):
-    user_schema = UserPublic.model_validate(user).model_dump()
-    response = client.delete(f"/users/{user_schema['id']}")
+    response = client.delete(f"/users/{user.id}")
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {"message": "User deleted"}
 
